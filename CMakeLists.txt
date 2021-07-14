@@ -32,6 +32,12 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        command.h
+        command.cpp
+        paintcommand.h
+        paintcommand.cpp
+        history.h
+        history.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
