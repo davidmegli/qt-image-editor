@@ -46,11 +46,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::drawLine(QPoint begin, QPoint end)
 {
-    qDebug()<<"painter!!!";
-    qDebug()<<"begin: "<<begin.x()<<begin.y();
-    qDebug()<<"end: "<<end.x()<<end.y();
-    qDebug()<<painter.use_count();
-    qDebug()<<image.use_count();
     painter->drawLine(begin,end);
 }
 
@@ -122,8 +117,8 @@ void MainWindow::mouseMoveEvent(QMouseEvent *e)
         QPen pen(penColor);
         pen.setCapStyle(Qt::RoundCap);
         pen.setWidth(penSize);
-        *endPoint = e->pos();
         painter->setPen(pen);
+        *endPoint = e->pos();
         setCommand();
         undoRedoHistory.executeCommand(currentCommand);
         *beginPoint = *endPoint;

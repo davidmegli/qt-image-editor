@@ -8,20 +8,20 @@ using std::shared_ptr;
 PaintCommand::PaintCommand(MainWindow* mainWin)
 {
     this->mainWin = mainWin;
+    this->image = mainWin->getImage();
+    this->begin = mainWin->getBeginPoint();
+    this->end = mainWin->getEndPoint();
 }
 
 void PaintCommand::execute()
 {
-    this->image = mainWin->getImage();
-    this->begin = mainWin->getBeginPoint();
-    this->end = mainWin->getEndPoint();
-    mainWin->drawLine();
+    mainWin->setImage(image.copy());
+    mainWin->drawLine(begin,end);
     mainWin->update();
 }
 
 void PaintCommand::undo()
 {
     mainWin->setImage(image.copy());
-    mainWin->updatePainter();
     mainWin->update();
 }
