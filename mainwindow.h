@@ -23,8 +23,12 @@ public:
     void drawLine();
     QPoint getBeginPoint();
     QPoint getEndPoint();
+    QColor getPenColor();
+    int getPenSize();
+    void setPen(QColor color, int size);
     QImage getImage();
     void setImage(QImage image);
+    void updatePen();
     void updatePainter();
     void setCommand();
     void paintEvent(QPaintEvent *e) override;
@@ -41,6 +45,7 @@ private slots:
     void on_actionRedo_triggered();
 
 private:
+    void init();
     Ui::MainWindow *ui;
     History undoRedoHistory;
     shared_ptr<Command> currentCommand;
@@ -49,6 +54,7 @@ private:
     shared_ptr<QImage> image;
     shared_ptr<QPoint> beginPoint;
     shared_ptr<QPoint> endPoint;
+    QPen pen;
     int penSize;
     //int brushSize;
     QColor penColor;

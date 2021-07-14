@@ -21,12 +21,16 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    init();
+}
+
+void MainWindow::init()
+{
     int height = 1080;
     int width = 1920;
     //TODO: handle height & width in a class, make a menu to edit them
     //TODO: container for image
     //TODO: make scrollbars
-
     image = std::make_shared<QImage>(width,height,QImage::Format_ARGB32_Premultiplied);
     painter = std::make_shared<QPainter>(image.get());
     beginPoint = std::make_shared<QPoint>();
@@ -34,8 +38,8 @@ MainWindow::MainWindow(QWidget *parent)
     setCommand();                //TODO: create command class for brush, rectangle, eraser, etc..
     mouseDown = false;
     penColor = QColor(Qt::black);
-    penSize = DEFAULT_PEN_SIZE;  //TODO: create default pen size as static value of class Pen
-
+    penSize = DEFAULT_PEN_SIZE;  //TODO: create default pen sizes as static value of class Pen
+    updatePen();
     setWindowTitle("QT Image Editor");
 }
 
@@ -68,6 +72,23 @@ QPoint MainWindow::getEndPoint()
     return point;
 }
 
+QColor MainWindow::getPenColor()
+{
+    return penColor;
+}
+
+int MainWindow::getPenSize()
+{
+    return penSize;
+}
+
+void MainWindow::setPen(QColor color, int size)
+{
+    penColor = color;
+    penSize = size;
+    updatePen();
+}
+
 QImage MainWindow::getImage()
 {
     return image->copy();
@@ -87,9 +108,16 @@ void MainWindow::updatePainter()
     painter = make_shared<QPainter>(image.get());
 }
 
+void MainWindow::updatePen()
+{
+    pen.setColor(penColor);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setWidth(penSize);
+    painter->setPen(pen);
+}
+
 void MainWindow::setCommand()
 {
-    qDebug()<<"setCommand";
     currentCommand = std::make_shared<PaintCommand>(this);
 }
 
@@ -111,15 +139,11 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 
 void MainWindow::mouseMoveEvent(QMouseEvent *e)
 {
-    qDebug()<<"mouseMoveEvent";
     if(mouseDown)
     {
-        QPen pen(penColor);
-        pen.setCapStyle(Qt::RoundCap);
-        pen.setWidth(penSize);
-        painter->setPen(pen);
+        updatePen();
         *endPoint = e->pos();
-        setCommand();
+        setCommand(); //TODO: risolvere penna che non si aggiorna
         undoRedoHistory.executeCommand(currentCommand);
         *beginPoint = *endPoint;
     }
@@ -138,12 +162,14 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *e)
 void MainWindow::on_actionSize_triggered()
 {
     penSize = QInputDialog::getInt(this,"Pen Size","Insert Size:",penSize,1);
+    updatePen();
 }
 
 
 void MainWindow::on_actionColor_triggered()
 {
     penColor = QColorDialog::getColor(penColor,this,"Pen Color");
+    updatePen();
 }
 
 
